@@ -22,39 +22,40 @@ const char* mutexnames[] = {
     "/out3mutex"
 };
 
-void read_thread(const char*, const char*);
+void read_process(const char*, const char*);
 void read_file(const char*, char*);
-void lock(sem_t*);
-void unlock(sem_t*);
+void write_process(const char*);
 
 std::queue<char> write_queue;
 std::thread read_threads[3];
+std::thread write_thread;
+int run_process = 1; // 0 == stop process, 1 == run process
 
 int main(int argc, char** argv)
 {
+    std::cout << "Press 'q' to exit consumer program..." << std::endl;
+
     for(int i = 0; i < 3; i++)
-        read_threads[i] = std::thread(read_thread, filenames[i], mutexnames[i]);
+        read_threads[i] = std::thread(read_process, filenames[i], mutexnames[i]);
 
-    while(1)
-    {
-        while(!write_queue.empty())
-        {
-            char to_write = write_queue.front();
-            write_queue.pop();
+    write_thread = std::thread(write_process, output_filename);
 
-            std::ofstream outfile(output_filename, std::ios_base::app);
-            outfile << to_write << std::endl;
-            outfile.close();
-        }
+    char in;
+    do {
+        std::cin >> in;
     }
+    while(in != 'q');
+    run_process = 0;
 
     for(int i = 0; i < 3; i++)
         read_threads[i].join();
 
+    write_thread.join();
+
     return 0;
 }
 
-void read_thread(const char* filename, const char* mutex_name)
+void read_process(const char* filename, const char* mutex_name)
 {
     
     sem_t *mutex = sem_open(mutex_name, O_CREAT);
@@ -67,12 +68,30 @@ void read_thread(const char* filename, const char* mutex_name)
     
     char lastread = ' ';
 
-    while(1)
+    while(run_process)
     {
         sleep(0.5f);
         sem_wait(mutex);
         read_file(filename, &lastread);
         sem_post(mutex);
+    }
+
+    sem_close(mutex);
+}
+
+void write_process(const char* filename)
+{
+    while(run_process)
+    {
+        while(!write_queue.empty())
+        {
+            char to_write = write_queue.front();
+            write_queue.pop();
+
+            std::ofstream outfile(filename, std::ios_base::app);
+            outfile << to_write << std::endl;
+            outfile.close();
+        }
     }
 }
 
@@ -87,4 +106,9 @@ void read_file(const char* filename, char *lastread)
 
     write_queue.push(temp);
     *lastread = temp;
+}
+
+int uinput_thread()
+{    
+
 }

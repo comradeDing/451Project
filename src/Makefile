@@ -10,15 +10,19 @@ buildprod:
 	$(CC) -std=$(VER) $(LINKS) -o $(EXE)3.out $(SRC)3.cpp
 
 cleanprod:
-	rm $(EXE)1.out output1.txt
-	rm $(EXE)2.out output2.txt
-	rm $(EXE)3.out output3.txt
+	rm $(EXE)1.out $(EXE)2.out $(EXE)3.out
 
 runprod:
 	./$(EXE)1.out & ./$(EXE)2.out & ./$(EXE)3.out
 
 buildcons:
-	$(CC) -std=$(VER) -pthread -o HW9 hw9-dingeldein.cpp
+	$(CC) -std=$(VER) -pthread -o HW9.out hw9-dingeldein.cpp
+
+cleancons:
+	rm HW9.out
 
 runcons:
-	./HW9
+	./HW9.out
+
+cleanoutput:
+	rm *.txt
