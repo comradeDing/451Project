@@ -3,7 +3,7 @@ Final project for CSci 451: Operating Systems
 
 Steps to build and run program...
 
--- BUILDING AND RUNNING PRODUCERS --
+	-- BUILDING AND RUNNING PRODUCERS --
 First, you need to build the producer programs. If you wish to modify what the producers output,
 you would do so at this time. Change the rules of the loop to do this.
 Run these commands in the working directory to build then run the producers.
@@ -11,8 +11,8 @@ Run these commands in the working directory to build then run the producers.
 	~ $ make runprods
 To kill the producer processes, use ctrl + c in the bash terminal, and run a 'ps' command to check
 if any producer processes didn't get killed. If they are still running, run a 'kill <pid>' command.
-
--- BUILDING AND RUNNING CONSUMER --
+	
+	-- BUILDING AND RUNNING CONSUMER --
 To build and run the consumer, you need to open another terminal, and run the following commands in
 the working directory:
 	~ $ make buildcons
